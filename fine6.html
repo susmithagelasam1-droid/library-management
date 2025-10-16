@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Enhanced Automatic Fine Calculator</title>
+  <style>
+    body { font-family: Arial; background:#f8f9fa; color:#333; padding:20px; }
+    label { display:block; margin-top:10px; }
+    input, select { padding:8px; margin-bottom:10px; width:100%; max-width:300px; }
+    button { padding:10px 20px; background:green; color:white; border:none; cursor:pointer; margin-top:10px; }
+    button:hover { background:#228b22; }
+    #result { margin-top:20px; font-weight:bold; color:#222; }
+    #fine-details { margin-top:10px; background:#fff; padding:10px; border-radius:5px; }
+  </style>
+</head>
+<body>
+
+  <h2>Enhanced Automatic Fine Calculator</h2>
+
+  <label for="actualDate">Actual Return Date:</label>
+  <input type="date" id="actualDate">
+
+  <label for="customerDate">Customer Return Date:</label>
+  <input type="date" id="customerDate">
+
+  <label for="finePerDay">Fine per Day (₹):</label>
+  <input type="number" id="finePerDay" value="50">
+
+  <label for="gracePeriod">Grace Period (days):</label>
+  <input type="number" id="gracePeriod" value="2">
+
+  <button onclick="calculateFine()">Calculate Fine</button>
+
+  <div id="result"></div>
+  <div id="fine-details"></div>
+
+  <script>
+    // Set today as default date
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('actualDate').value = today;
+    document.getElementById('customerDate').value = today;
+
+    function calculateFine() {
+      const actual = new Date(document.getElementById('actualDate').value);
+      const customer = new Date(document.getElementById('customerDate').value);
+      const finePerDay = parseFloat(document.getElementById('finePerDay').value);
+      const gracePeriod = parseInt(document.getElementById('gracePeriod').value);
+
+      const resultDiv = document.getElementById('result');
+      const detailsDiv = document.getElementById('fine-details');
+
+      // Validate inputs
+      if (isNaN(actual) || isNaN(customer)) {
+        resultDiv.innerHTML = "Please select valid dates.";
+        detailsDiv.innerHTML = "";
+        return;
+      }
+
+      const diffDays = Math.floor((customer - actual) / (1000 * 60 * 60 * 24));
+      let fine = 0;
+
+      if (diffDays > gracePeriod) {
+        const lateDays = diffDays - gracePeriod;
+        fine = lateDays * finePerDay;
+        resultDiv.innerHTML = `Late by ${lateDays} day(s) (after ${gracePeriod}-day grace period). Total Fine: ₹${fine.toFixed(2)}`;
+        
+        let breakdown = "<strong>Day-by-Day Fine Calculation:</strong><br>";
+        for (let i = 1; i <= lateDays; i++) {
+          breakdown += `Day ${i}: ₹${finePerDay.toFixed(2)}<br>`;
+        }
+        detailsDiv.innerHTML = breakdown;
+
+      } else if (diffDays > 0 && diffDays <= gracePeriod) {
+        resultDiv.innerHTML = `Returned within grace period (${gracePeriod} days). No fine applies.`;
+        detailsDiv.innerHTML = "";
+      } else if (diffDays === 0) {
+        resultDiv.innerHTML = "Returned on the same day. No fine.";
+        detailsDiv.innerHTML = "";
+      } else {
+        resultDiv.innerHTML = "Returned early or on time. No fine.";
+        detailsDiv.innerHTML = "";
+      }
+    }
+  </script>
+
+</body>
+</html>

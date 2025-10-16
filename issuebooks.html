@@ -1,0 +1,146 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Issue Books - Library Management</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f7f8;
+      display: flex;
+      justify-content: center;
+      padding: 50px;  
+    }
+
+    .container {
+      background: white;
+      padding: 25px 40px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      width: 400px;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 25px;
+      color: #333;
+    }
+
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 15px;
+      color: #555;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 6px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 14px;
+    }
+
+    button {
+      margin-top: 25px;
+      width: 100%;
+      padding: 12px;
+      background-color: #4CAF50;
+      color: white;
+      font-size: 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    .message {
+      margin-top: 15px;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    .error {
+      color: #e74c3c;
+    }
+
+    .success {
+      color: #27ae60;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Issue Book</h2>
+    <form id="issueBookForm">
+      <label for="memberId">Member ID</label>
+      <input type="text" id="memberId" name="memberId" placeholder="Enter Member ID" required />
+
+      <label for="bookId">Book ID</label>
+      <input type="text" id="bookId" name="bookId" placeholder="Enter Book ID" required />
+
+      <label for="issueDate">Issue Date</label>
+      <input type="date" id="issueDate" name="issueDate" required />
+
+      <label for="dueDate">Due Date</label>
+      <input type="date" id="dueDate" name="dueDate" required />
+
+      <label for="status">Status</label>
+      <select id="status" name="status" required>
+        <option value="">Select Status</option>
+        <option value="Issued">Issued</option>
+        <option value="Returned">Returned</option>
+        <option value="Overdue">Overdue</option>
+        <option value="Lost">Lost</option>
+      </select>
+
+      <a href="issuedlist.html">ISSUE LIST</a>
+    </form>
+
+    <div id="message" class="message"></div>
+  </div>
+
+  <script>
+    document.getElementById('issueBookForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+
+      const memberId = document.getElementById('memberId').value.trim();
+      const bookId = document.getElementById('bookId').value.trim();
+      const issueDate = document.getElementById('issueDate').value;
+      const dueDate = document.getElementById('dueDate').value;
+      const status = document.getElementById('status').value;
+      const messageDiv = document.getElementById('message');
+
+      // Clear previous message
+      messageDiv.textContent = '';
+      messageDiv.className = 'message';
+
+      // Basic validation
+      if (!memberId || !bookId || !issueDate || !dueDate || !status) {
+        messageDiv.textContent = 'Please fill in all fields.';
+        messageDiv.classList.add('error');
+        return;
+      }
+
+      if (new Date(issueDate) > new Date(dueDate)) {
+        messageDiv.textContent = 'Due date must be after issue date.';
+        messageDiv.classList.add('error');
+        return;
+      }
+
+      // Success message
+      messageDiv.textContent = `Book ID ${bookId} has been issued to Member ID ${memberId} with status: ${status}.`;
+      messageDiv.classList.add('success');
+
+      // Optionally, reset the form
+      this.reset();
+    });
+  </script>
+</body>
+</html>
